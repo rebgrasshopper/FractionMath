@@ -21,15 +21,6 @@ exitLines = [
     'Thanks for using Fraction Math!',
     ''
     ]
-colors = {
-    'red': '\003[08',
-    'cyan': '\033[36m',
-    'green': '\033[32m',
-    'orange': '\033[33m',
-    'gray': '\033[37m',
-    'yellow': '\033[93m',
-    'purple': '\033[35m'
-}
 operators = ['*', '/', "-", '+']
 numberParts = [x for x in '0123456789_/']
 
@@ -60,6 +51,7 @@ def findGCD(num1, num2):
 
 
 def convertMixedToFraction(number):
+    '''make sure all numbers, fraction, whole, and mixed, are output in fraction form'''
     # temporarily remove minus sign so we can parse the string into numbers
     negative = number[0] == "-"
     number = number[1:] if negative else number
@@ -77,10 +69,13 @@ def convertMixedToFraction(number):
         return f"-{number}/1" if negative else f"{number}/1"
 
 def convertFractionToProper(numArray):
-    '''function to ensure that improper fractions are turned into proper fractions for final display'''
-    negative = numArray[0] < 0
+    '''ensure that improper fractions and unsimplified fractions are turned into proper, simplified fractions for final display'''
+    
+    # the whole is negative if either the numerator or denominator is negative, but not if both are negative
+    negative = True if (numArray[0] < 0 or numArray[1] < 0) and not (numArray[0] < 0 and numArray[1] < 0) else False
     numerator = abs(numArray[0])
-    denominator = numArray[1]
+    denominator = abs(numArray[1])
+    
     # simplify improper fractions into mixed numbers
     if numerator > denominator:
         whole = 0
@@ -101,32 +96,43 @@ def convertFractionToProper(numArray):
 
 
 def doTheMath(userInput):
+    '''take a string with a number, an operator, and another number and perfrom the correct mathematical operation on them. Approved number formats are "3", "3/2", "3_3/2"'''
+    
+    ###################################################################################################
+    # let's get it working for single operators first before looking into more complicated operations #
+    ###################################################################################################
+    
+    # separate arguments
     mathArray = userInput.split()
+
+    # reject input with no operators
     if not any([x in operators for x in mathArray]):
-        # necessary task = turn improper fractions into correct form
         return mathArray[0] if len(mathArray) == 1 else "You must include an operator to combine multiple numbers"
-    # let's get it working for single operators first
+
     # check operator placement and length of arguments
     if not len(mathArray) == 3 or mathArray[1] not in operators or mathArray[0] in operators or mathArray[2] in operators:
         return 'Please follow the following format: number operator number'
+    
+    # check number format
     else:
-        # check number format
         firstNum, operator, secondNum = mathArray
-        #match positive or negative versions of three number styles - whole, fraction, or mixed number
+        # match positive or negative versions of three number styles - whole, fraction, or mixed number
         firstMatch = re.match("-?[\d]+_-?[\d]+/-?[\d]+|-?[\d]+/-?[\d]+|-?[\d]+", firstNum)
         secondMatch = re.match("-?[\d]+_-?[\d]+/-?[\d]+|-?[\d]+/-?[\d]+|-?[\d]+", secondNum)
+        # reject equation if either number doesn't match format
         if not firstMatch or firstMatch.group(0) != firstNum:
             return f"{firstNum} does not match expected number format. Type 'help' for more information!"
         elif not secondMatch or secondMatch.group(0) != secondNum:
             return f"{secondNum} does not match expected number format. Type 'help' for more information!"
+       
+       # all is well - initiate actual math
         else:
             # convert numbers to improper fractions
-            firstNum = convertMixedToFraction(firstNum)
-            secondNum = convertMixedToFraction(secondNum)
-            firstNum = firstNum.split("/")
-            secondNum = secondNum.split("/")
+            firstNum = convertMixedToFraction(firstNum).split("/")
+            secondNum = convertMixedToFraction(secondNum).split("/")
+            
+            # separate pathways for each operator
             if operator == "+":
-                # return firstNum, operator, secondNum
                 if (firstNum[1] == secondNum[1]):
                     initialTotal = [int(firstNum[0]) + int(secondNum[0]), int(firstNum[1])]
                     return convertFractionToProper(initialTotal)
@@ -155,6 +161,7 @@ def doTheMath(userInput):
 
 
 def checkCorrectCharacters(userInput):
+    '''return True if all characters are in "0123456789_/*-+= " otherwise False'''
     allowedCharacters = [x for x in '0123456789_/*-+= ']
     for char in userInput:
         if char not in allowedCharacters:
@@ -162,6 +169,7 @@ def checkCorrectCharacters(userInput):
     return True
 
 def parseInput(userInput):
+    '''look out for key commands in user input'''
     if (userInput.lower() == 'help'):
         print('\n'.join(advice))
         return True

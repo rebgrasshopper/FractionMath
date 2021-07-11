@@ -90,7 +90,8 @@ def test_fractionMath():
         ['1_3/4 + 2_3/8', ['= 4_1/8']],
         ['1_3/4 + 7', ['= 8_3/4']],
         ['-1/2 + 4_2/3', ['= 4_1/6']],
-        ['-1/2 + -4_2/3', ['= -5_1/6']]
+        ['-1/2 + -4_2/3', ['= -5_1/6']],
+        ['1/2 + -1/2', ['= 0']]
         ]
     for inputString, outputString in additionInput:
         testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
@@ -106,7 +107,8 @@ def test_fractionMath():
         ['1_3/4 - 2_3/8', ['= -5/8']],
         ['1_3/4 - 7', ['= -5_1/4']],
         ['-1/2 - 4_2/3', ['= -5_1/6']],
-        ['-1/2 - -4_2/3', ['= 4_1/6']]
+        ['-1/2 - -4_2/3', ['= 4_1/6']],
+        ['1/2 - -1/2', ['= 1']]
         ]
     for inputString, outputString in additionInput:
         testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
@@ -121,7 +123,8 @@ def test_fractionMath():
         ['1_3/4 * 2_3/8', ['= 4_5/32']],
         ['1_3/4 * 7', ['= 12_1/4']],
         ['-1/2 * 4_2/3', ['= -2_1/3']],
-        ['-1/2 * -4_2/3', ['= 2_1/3']]
+        ['-1/2 * -4_2/3', ['= 2_1/3']],
+        ['1/2 * -1/2', ['= -1/4']]
         ]
     for inputString, outputString in additionInput:
         testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
@@ -137,7 +140,8 @@ def test_fractionMath():
         ['1_3/4 / 2_3/8', ['= 14/19']],
         ['1_3/4 / 7', ['= 1/4']],
         ['-1/2 / 4_2/3', ['= -3/28']],
-        ['-1/2 / -4_2/3', ['= 3/28']]
+        ['-1/2 / -4_2/3', ['= 3/28']],
+        ['1/2 / -1/2', ['= -1']]
         ]
     for inputString, outputString in additionInput:
         testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
