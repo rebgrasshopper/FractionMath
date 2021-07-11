@@ -15,9 +15,14 @@ advice = [
             "",
             "",
             ]
+welcomeLines = [
+    '',
+    "Welcome to Fraction Math!",
+    "For help, enter 'help'. Otherwise, let's do math!",
+    ''
+]
 exitLines = [
     '',
-
     'Thanks for using Fraction Math!',
     ''
     ]
@@ -30,7 +35,7 @@ numberParts = [x for x in '0123456789_/']
 
 def fractionMath():
     '''a simple fraction math program intended to give an answer formatted as a fraction to fractions being added, subtracted, multiplied, or divided'''
-    print("Welcome to Fraction Math. For help, enter 'help'. Otherwise, let's do math!")
+    print('\n'.join(welcomeLines))
     goAgain = True
     while goAgain:
         userInput = input("? ")
@@ -161,8 +166,8 @@ def doTheMath(userInput):
 
 
 def checkCorrectCharacters(userInput):
-    '''return True if all characters are in "0123456789_/*-+= " otherwise False'''
-    allowedCharacters = [x for x in '0123456789_/*-+= ']
+    '''return True if all characters are in "0123456789_/*-+ " otherwise False'''
+    allowedCharacters = [x for x in '0123456789_/*-+ ']
     for char in userInput:
         if char not in allowedCharacters:
             return False
