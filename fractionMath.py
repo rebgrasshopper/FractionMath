@@ -1,5 +1,4 @@
-def doTheMath(num1, num2):
-    return num1 + num2
+# variables
 
 advice = [
             "",
@@ -14,7 +13,11 @@ advice = [
             "",
             "",
             ]
-
+exitLines = [
+    '',
+    'Thanks for using Fraction Math!',
+    ''
+    ]
 colors = {
     'red': '\003[08',
     'cyan': '\033[36m',
@@ -24,6 +27,11 @@ colors = {
     'yellow': '\033[93m',
     'purple': '\033[35m'
 }
+operators = ['*', '/', "-", '+']
+
+
+
+#main function
 
 def fractionMath():
     '''a simple fraction math program intended to give an answer formatted as a fraction to fractions being added, subtracted, multiplied, or divided'''
@@ -33,6 +41,28 @@ def fractionMath():
         userInput = input("? ")
         goAgain = parseInput(userInput)
 
+
+
+
+
+#sub functions
+
+def convertMixedToFraction(number):
+    negative = number[0] == "-"
+    number = number[1:] if negative else number
+    whole, fraction = number.split("_")
+    numerator, denominator = fraction.split("/")
+    improperFraction = f'{int(numerator)+(int(whole)*int(denominator))}/{denominator}'
+    return '-' + improperFraction if negative else improperFraction
+
+def doTheMath(userInput):
+    mathArray = userInput.split()
+    if not any([x in operators for x in mathArray]):
+        # necessary task = turn improper fractions into correct form
+        return mathArray[0] if len(mathArray) == 1 else "You must include an operator to combine multiple numbers"
+    #let's get it working for single operators first
+        return 'operators present'
+
 def checkCorrectCharacters(userInput):
     allowedCharacters = [x for x in '0123456789_/*-+= ']
     for char in userInput:
@@ -40,26 +70,23 @@ def checkCorrectCharacters(userInput):
             return False
     return True
 
-
-
 def parseInput(userInput):
     if (userInput.lower() == 'help'):
         print('\n'.join(advice))
         return True
     elif (userInput.lower() == 'exit' or userInput.lower() == 'quit' ):
-        exitLines = ['','Thanks for using Fraction Math!', '']
-        print(*exitLines, sep = "\n")
+        print('\n'.join(exitLines))
         return False
     elif (checkCorrectCharacters(userInput)):
-        answer = doTheMath(1, 2)
-        print(colors['purple'], f'= {answer}.', colors['gray'])
+        answer = doTheMath(userInput)
+        print(f'= {answer}')
         return True
     else:
         print("Please use only numbers, _, and allowed operators. Type 'help' for more info!")
         return True
 
 
-
+# run script
 
 if __name__ == '__main__':
     fractionMath()
