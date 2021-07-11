@@ -8,6 +8,16 @@ green = '\033[32m'
 gray = '\033[37m'
 purple = '\033[35m'
 
+def testConsoleOutput(stringIn, stringOutArray, passMsg=""):
+    capturedOutput = io.StringIO()                  # Create StringIO object
+    sys.stdout = capturedOutput                     # Redirect stdout.
+    fractionMath.parseInput(stringIn)               # Call function.
+    sys.stdout = sys.__stdout__                     # Reset redirect.
+    assert capturedOutput.getvalue().strip() == '\n'.join(stringOutArray).strip(), 'input: '+stringIn+'\n\nexpected output:\n\n'+'\n'.join(stringOutArray).strip()+'\n\nactual output:\n\n'+capturedOutput.getvalue().strip()
+    if passMsg:
+        print(green, f"Pass: {passMsg}", gray)
+
+
 def test_fractionMath():
 
 
@@ -26,53 +36,64 @@ def test_fractionMath():
     print('\nConverting to Improper Fractions\n')
     negativeInput = '-23_1/2'
     positiveInput = '23_1/2'
+    plainFraction = '2/3'
+    wholeNumber = '2'
     assert fractionMath.convertMixedToFraction(negativeInput) == '-47/2', f"converting {negativeInput} should yield -47/2"
     print(green, f"Pass: Negative mixed number turns into correct negative fraction: {negativeInput} --> -47/2", gray)
     assert fractionMath.convertMixedToFraction(positiveInput) == '47/2', f"converting {positiveInput} should yield 47/2"
     print(green, f"Pass: Positive mixed number turns into correct positive fraction: {positiveInput} --> 47/2", gray)
+    assert fractionMath.convertMixedToFraction(plainFraction) == '2/3', f"converting {plainFraction} should yield 2/3"
+    print(green, f"Pass: Plain fraction remains the same: {plainFraction} --> 2/3", gray)
+    assert fractionMath.convertMixedToFraction(wholeNumber) == '2/1', f"converting {wholeNumber} should yield 2/1"
+    print(green, f"Pass: Whole number turns into improper fraction: {wholeNumber} --> 2/1", gray)
 
-
+    # helper math functions
+    print('\nGCD\n')
+    pairs = [[20, 456, 4], [4,12, 4], [4, 8, 4], [21, 49, 7], [3,9, 3], [0, 4, 4], [0, 0, 0], [1, 0, 1]]
+    for a,b,c in pairs:
+        assert fractionMath.findGCD(a,b) == c, f"The Greatest Common Denominator of {a} and {b} should be {c}"
+    print(green, "Pass: GCD all processed successfully", gray)
+    
 
     #Output validation
     print('\nOutput Validation\n')
     # check for HELP ADVICE **
-    capturedOutput = io.StringIO()                  # Create StringIO object
-    sys.stdout = capturedOutput                     # Redirect stdout.
-    fractionMath.parseInput('help')                 # Call function.
-    sys.stdout = sys.__stdout__                     # Reset redirect.
-    assert capturedOutput.getvalue().strip() == '\n'.join(fractionMath.advice).strip(), 'Help input returns \n\n' + capturedOutput.getvalue().strip() + '\n\n instead of \n\n' + "\n".join(fractionMath.advice).strip()
-    print(green, "Pass: Outputs help advice", gray)
+    testConsoleOutput('help', fractionMath.advice, 'Outputs help advice')
 
     # check for EXIT MESSAGE **
-    capturedOutput = io.StringIO()                  # Create StringIO object
-    sys.stdout = capturedOutput                     # Redirect stdout.
-    fractionMath.parseInput('exit')                 # Call function.
-    sys.stdout = sys.__stdout__                     # Reset redirect.
-    assert capturedOutput.getvalue().strip() == '\n'.join(fractionMath.exitLines).strip(), 'Help input returns \n\n' + capturedOutput.getvalue().strip() + '\n\n instead of \n\n' + "\n".join(fractionMath.exitLines).strip()
-    print(green, "Pass: Outputs exit message", gray)
+    testConsoleOutput('exit', fractionMath.exitLines, 'Outputs exit message')
 
     # check for BAD INPUT MESSAGE **
     badInput = 'ksdf 39543 sdf'
-    capturedOutput = io.StringIO()                  # Create StringIO object
-    sys.stdout = capturedOutput                     # Redirect stdout.
-    fractionMath.parseInput(badInput)               # Call function.
-    sys.stdout = sys.__stdout__                     # Reset redirect.
-    assert capturedOutput.getvalue().strip() == "Please use only numbers, _, and allowed operators. Type 'help' for more info!", 'Help input returns \n\n' + capturedOutput.getvalue().strip() + "\n\n instead of \n\n Please use only numbers, _, and allowed operators. Type 'help' for more info!"
-    print(green, "Pass: Outputs rejected input message", gray)
+    testConsoleOutput(badInput, ["Please use only numbers, _, and allowed operators. Type 'help' for more info!"], "Outputs rejected input message")
 
     # check for SINGLE WHOLE NUMBER or SINGLE PROPER FRACTION **
     singleWhole = '42'
     singleProper = '1/32'
-    capturedOutput = io.StringIO()                  # Create StringIO object
-    sys.stdout = capturedOutput                     # Redirect stdout.
-    fractionMath.parseInput(singleWhole)                 # Call function.
-    fractionMath.parseInput(singleProper)                 # Call function.
-    sys.stdout = sys.__stdout__                     # Reset redirect.
-    assert capturedOutput.getvalue().strip() == '= 42\n= 1/32', f"expect output: \n= 42\n= 1/32\nactual output: \n{capturedOutput.getvalue().strip()}"
-    print(green, "Pass: Outputs single whole or proper fraction numbers as is", gray)
+    testConsoleOutput(singleWhole, ['= 42'], f"Outputs whole number unchanged: 42 --> 42")
+    testConsoleOutput(singleProper, ['= 1/32'], f"Outputs single proper fraction unchanged: 1/32 --> 1/32")
 
+    # check for IMPROPER OPERATOR PLACEMENT **
+    badInputArray = ['2 * *', '2_1/2 /', '- 3 2/3']
+    outputMatch = ["= Please follow the following format: number operator number"]
+    for item in badInputArray:
+        testConsoleOutput(item, outputMatch, "Rejects improperly placed operators: "+item)
+    
 
+    # check for ADDITION
+    print('\nAddition Validation\n')
+    # check for IMPROPER OPERATOR PLACEMENT **
+    additionInput = [
+        ['325/90 + 140/13', ['= 14_89/234']],
+        ['1/2 +   1/3', ['= 5/6']],
+        ['30/7 + 2/4    ', ['= 4_11/14']],
+        ['1/2 + 1/2', ['= 1']]
+        ]
+    for inputString, outputString in additionInput:
+        testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
+    
 
+    
 if __name__ == "__main__":
     test_fractionMath()
     print('\nFinal Assessment\n')
