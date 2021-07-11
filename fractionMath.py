@@ -71,14 +71,15 @@ def convertMixedToFraction(number):
         return '-' + improperFraction if negative else improperFraction
     # send plain fractions on as is
     elif '/' in number:
-        return number
+        return f"-{number}" if negative else number
     # turn whole numbers into fractions as well.
     else:
         return f"-{number}/1" if negative else f"{number}/1"
 
 def convertFractionToProper(numArray):
     '''function to ensure that improper fractions are turned into proper fractions for final display'''
-    numerator = numArray[0]
+    negative = numArray[0] < 0
+    numerator = abs(numArray[0])
     denominator = numArray[1]
     # simplify improper fractions into mixed numbers
     if numerator > denominator:
@@ -87,14 +88,16 @@ def convertFractionToProper(numArray):
             whole += 1
             numerator -= denominator
         gcd = findGCD(numerator, denominator)
-        return f"{whole}_{int(numerator/gcd)}/{int(denominator/gcd)}"
+        numberString = f"{whole}_{int(numerator/gcd)}/{int(denominator/gcd)}" if numerator != 0 else f"{whole}"
+        return f"-{numberString}" if negative else numberString
     # ensure that fractions are shown with the smallest possible denominator
     elif numerator < denominator:
         gcd = findGCD(numerator, denominator)
-        return f"{int(numerator/gcd)}/{int(denominator/gcd)}"
+        numberString = f"{int(numerator/gcd)}/{int(denominator/gcd)}" if numerator != 0 else "0"
+        return f"-{numberString}" if negative else numberString
     # return 1 for fractions that have equal numerator and denominator
     else:
-        return '1'
+        return '-1' if negative else '1'
 
 
 def doTheMath(userInput):
@@ -109,16 +112,19 @@ def doTheMath(userInput):
     else:
         # check number format
         firstNum, operator, secondNum = mathArray
-        firstMatch = re.match("[\d]+_[\d]+/[\d]+|[\d]+/[\d]+|[\d]+", firstNum)
-        secondMatch = re.match("[\d]+_[\d]+/[\d]+|[\d]+/[\d]+|[\d]+", secondNum)
+        #match positive or negative versions of three number styles - whole, fraction, or mixed number
+        firstMatch = re.match("-?[\d]+_-?[\d]+/-?[\d]+|-?[\d]+/-?[\d]+|-?[\d]+", firstNum)
+        secondMatch = re.match("-?[\d]+_-?[\d]+/-?[\d]+|-?[\d]+/-?[\d]+|-?[\d]+", secondNum)
         if not firstMatch or firstMatch.group(0) != firstNum:
             return f"{firstNum} does not match expected number format. Type 'help' for more information!"
         elif not secondMatch or secondMatch.group(0) != secondNum:
             return f"{secondNum} does not match expected number format. Type 'help' for more information!"
         else:
             # convert numbers to improper fractions
-            firstNum = convertMixedToFraction(firstNum).split('/')
-            secondNum = convertMixedToFraction(secondNum).split('/')
+            firstNum = convertMixedToFraction(firstNum)
+            secondNum = convertMixedToFraction(secondNum)
+            firstNum = firstNum.split("/")
+            secondNum = secondNum.split("/")
             if operator == "+":
                 # return firstNum, operator, secondNum
                 if (firstNum[1] == secondNum[1]):
@@ -130,7 +136,22 @@ def doTheMath(userInput):
                     matchedSecondNum = [int(secondNum[0])*int(firstNum[1]), int(secondNum[1])*int(firstNum[1])]
                     initialTotal = [matchedFirstNum[0]+matchedSecondNum[0], matchedFirstNum[1]]
                     return convertFractionToProper(initialTotal)
-
+            elif operator == "-":
+                if (firstNum[1] == secondNum[1]):
+                    initialTotal = [int(firstNum[0]) - int(secondNum[0]), int(firstNum[1])]
+                    return convertFractionToProper(initialTotal)
+                else:
+                    # ensure matching denominators
+                    matchedFirstNum = [int(firstNum[0])*int(secondNum[1]), int(firstNum[1])*int(secondNum[1])]
+                    matchedSecondNum = [int(secondNum[0])*int(firstNum[1]), int(secondNum[1])*int(firstNum[1])]
+                    initialTotal = [matchedFirstNum[0] - matchedSecondNum[0], matchedFirstNum[1]]
+                    return convertFractionToProper(initialTotal)
+            elif operator == "*":
+                initialTotal = [int(firstNum[0]) * int(secondNum[0]), int(firstNum[1])* int(secondNum[1])]
+                return convertFractionToProper(initialTotal)
+            else: #operator == /
+                initialTotal = [int(firstNum[0]) * int(secondNum[1]), int(firstNum[1])*int(secondNum[0])]
+                return convertFractionToProper(initialTotal)
 
 
 def checkCorrectCharacters(userInput):

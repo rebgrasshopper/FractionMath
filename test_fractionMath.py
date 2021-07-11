@@ -82,16 +82,65 @@ def test_fractionMath():
 
     # check for ADDITION
     print('\nAddition Validation\n')
-    # check for IMPROPER OPERATOR PLACEMENT **
     additionInput = [
         ['325/90 + 140/13', ['= 14_89/234']],
         ['1/2 +   1/3', ['= 5/6']],
         ['30/7 + 2/4    ', ['= 4_11/14']],
-        ['1/2 + 1/2', ['= 1']]
+        ['1/2 + 1/2', ['= 1']],
+        ['1_3/4 + 2_3/8', ['= 4_1/8']],
+        ['1_3/4 + 7', ['= 8_3/4']],
+        ['-1/2 + 4_2/3', ['= 4_1/6']],
+        ['-1/2 + -4_2/3', ['= -5_1/6']]
         ]
     for inputString, outputString in additionInput:
         testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
-    
+
+
+# check for SUBTRACTION
+    print('\nSubtraction Validation\n')
+    additionInput = [
+        ['325/90 - 140/13', ['= -7_37/234']],
+        ['1/2 -   1/3', ['= 1/6']],
+        ['30/7 - 2/4    ', ['= 3_11/14']],
+        ['1/2 - 1/2', ['= 0']],
+        ['1_3/4 - 2_3/8', ['= -5/8']],
+        ['1_3/4 - 7', ['= -5_1/4']],
+        ['-1/2 - 4_2/3', ['= -5_1/6']],
+        ['-1/2 - -4_2/3', ['= 4_1/6']]
+        ]
+    for inputString, outputString in additionInput:
+        testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
+
+    # check for MULTIPLICATION
+    print('\nMultiplication Validation\n')
+    additionInput = [
+        ['325/90 * 140/13', ['= 38_8/9']],
+        ['1/2 *   1/3', ['= 1/6']],
+        ['30/7 * 2/4    ', ['= 2_1/7']],
+        ['1/2 * 1/2', ['= 1/4']],
+        ['1_3/4 * 2_3/8', ['= 4_5/32']],
+        ['1_3/4 * 7', ['= 12_1/4']],
+        ['-1/2 * 4_2/3', ['= -2_1/3']],
+        ['-1/2 * -4_2/3', ['= 2_1/3']]
+        ]
+    for inputString, outputString in additionInput:
+        testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
+
+
+    # check for DIVISION
+    print('\nDivision Validation\n')
+    additionInput = [
+        ['325/90 / 140/13', ['= 169/504']],
+        ['1/2 /   1/3', ['= 1_1/2']],
+        ['30/7 / 2/4    ', ['= 8_4/7']],
+        ['1/2 / 1/2', ['= 1']],
+        ['1_3/4 / 2_3/8', ['= 14/19']],
+        ['1_3/4 / 7', ['= 1/4']],
+        ['-1/2 / 4_2/3', ['= -3/28']],
+        ['-1/2 / -4_2/3', ['= 3/28']]
+        ]
+    for inputString, outputString in additionInput:
+        testConsoleOutput(inputString, outputString, f"{inputString} {outputString[0]}")
 
     
 if __name__ == "__main__":
