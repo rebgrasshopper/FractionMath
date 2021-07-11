@@ -1,6 +1,6 @@
 # Fraction Math
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Made with: Python](https://img.shields.io/badge/Made%20with-python-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Table Of Contents:
 
